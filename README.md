@@ -62,3 +62,15 @@ SQL-Performance-Detective/
 ## Purpose
 
 This project is intended for learning Oracle SQL performance concepts and demonstrating Python application development.
+
+
+## Screenshots
+
+### Dashboard
+![SQL Performance Detective Dashboard](screenshots/home.png)
+
+### Performance Comparison
+![Performance Comparison](screenshots/performance-comparison.png)
+
+### Execution Plan Explorer
+![Execution Plan Explorer](screenshots/execution-plan.png)
