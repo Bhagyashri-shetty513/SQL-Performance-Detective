@@ -115,3 +115,72 @@ st.caption(
     "A percentage decrease is not proof of successful tuning. "
     "Compare equivalent workloads and validate execution statistics."
 )
+
+
+st.divider()
+st.header("🔎 Automated Tuning Insights")
+
+st.caption(
+    "Rule-based observations based on the metrics you entered. "
+    "These are investigation hints, not definitive diagnoses."
+)
+
+if before_elapsed == 0:
+    st.warning(
+        "The original elapsed time is zero. "
+        "A percentage comparison cannot be calculated."
+    )
+elif after_elapsed > before_elapsed:
+    st.warning(
+        "Elapsed time increased after the change. "
+        "Review the execution plans, workload, and test conditions."
+    )
+elif after_elapsed == before_elapsed:
+    st.info(
+        "Elapsed time is unchanged. Compare CPU time, buffer gets, "
+        "and disk reads to identify other changes."
+    )
+else:
+    elapsed_improvement = (
+        (before_elapsed - after_elapsed) / before_elapsed
+    ) * 100
+
+    st.success(
+        f"Elapsed time decreased by {elapsed_improvement:.1f}%."
+    )
+
+if before_gets > 0:
+    gets_change = ((before_gets - after_gets) / before_gets) * 100
+
+    if gets_change < 0:
+        st.warning(
+            f"Buffer gets increased by {abs(gets_change):.1f}%. "
+            "Investigate logical I/O and the execution plan."
+        )
+    elif gets_change > 0:
+        st.info(
+            f"Buffer gets decreased by {gets_change:.1f}%. "
+            "Check that the result set and workload are comparable."
+        )
+    else:
+        st.info("Buffer gets are unchanged.")
+
+if before_reads > 0:
+    reads_change = ((before_reads - after_reads) / before_reads) * 100
+
+    if reads_change < 0:
+        st.warning(
+            f"Disk reads increased by {abs(reads_change):.1f}%. "
+            "Investigate physical I/O, cache state, and test conditions."
+        )
+    elif reads_change > 0:
+        st.info(
+            f"Disk reads decreased by {reads_change:.1f}%."
+        )
+    else:
+        st.info("Disk reads are unchanged.")
+
+st.caption(
+    "Validate observations using actual execution statistics and "
+    "repeatable tests. Metric changes alone do not prove causation."
+)
