@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from utils import calculate_change
 
 st.title("📊 SQL Performance Comparison")
 st.caption("Compare Oracle SQL metrics before and after tuning.")
@@ -51,11 +52,6 @@ with after_col:
 st.divider()
 st.subheader("Performance Results")
 
-
-def calculate_change(before, after):
-    if before == 0:
-        return None
-    return ((before - after) / before) * 100
 
 
 metrics = [
