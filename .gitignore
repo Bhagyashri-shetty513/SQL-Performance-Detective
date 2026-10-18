@@ -5,3 +5,4 @@ __pycache__/
 .env
 .streamlit/secrets.toml
 *.log
+app_backup.py
