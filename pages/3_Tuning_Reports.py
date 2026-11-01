@@ -1,10 +1,14 @@
 
 import streamlit as st
+from utils import apply_theme, detective_guide
 import pandas as pd
 from datetime import date
+from report_store import load_reports, save_report
 
 st.title("📄 SQL Tuning Reports")
+apply_theme()
 st.caption("Document and export your Oracle SQL tuning investigations.")
+detective_guide("A few clear notes make this report useful to your future self.", "Include the test conditions and how you checked the result.", "🦉")
 
 st.info("Enter your own measurements. The report does not connect to Oracle.")
 
@@ -101,6 +105,13 @@ if submitted:
         }
     ])
 
+    saved_report_id = save_report(report.to_dict(orient="records"))
+    st.session_state["latest_tuning_report"] = report.to_dict(orient="records")
+    st.session_state["latest_tuning_report_id"] = saved_report_id
+
+if "latest_tuning_report" in st.session_state:
+    report = pd.DataFrame(st.session_state["latest_tuning_report"])
+
     st.subheader("Report Preview")
     st.dataframe(report, use_container_width=True, hide_index=True)
 
@@ -111,9 +122,27 @@ if submitted:
         mime="text/csv"
     )
 
-    st.success("Your report is ready to download.")
+    st.success(
+        f"Report #{st.session_state['latest_tuning_report_id']} saved on this device and ready to download."
+    )
 
     st.caption(
         "A negative change means the after value increased. "
         "Validate comparisons using equivalent workloads and test conditions."
+    )
+
+st.divider()
+st.subheader("Saved Report History")
+saved_reports = pd.DataFrame(load_reports())
+if saved_reports.empty:
+    st.caption("Generated reports will appear here and remain available after you restart the app.")
+else:
+    st.caption(f"{saved_reports['Report #'].nunique()} saved investigation(s) on this device.")
+    st.dataframe(saved_reports, use_container_width=True, hide_index=True)
+    st.download_button(
+        "Download Saved History (CSV)",
+        data=saved_reports.to_csv(index=False).encode("utf-8-sig"),
+        file_name="sql_tuning_report_history.csv",
+        mime="text/csv",
+        key="download_report_history",
     )

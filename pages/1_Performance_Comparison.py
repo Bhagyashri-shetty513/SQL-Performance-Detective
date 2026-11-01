@@ -2,10 +2,13 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from utils import calculate_change
+from utils import apply_theme, calculate_change, detective_guide
+
+apply_theme()
 
 st.title("📊 SQL Performance Comparison")
 st.caption("Compare Oracle SQL metrics before and after tuning.")
+detective_guide("Change any input and the comparison updates instantly.", "Start with elapsed time, then check whether logical and physical reads moved in the same direction.", "🕵️")
 
 st.info("Demo mode: default values are illustrative sample data.")
 
@@ -102,8 +105,13 @@ fig = px.bar(
     y="Value",
     text="Value",
     color="Stage",
+    color_discrete_map={"Before Tuning": "#ff7168", "After Tuning": "#12b8c7"},
     title=selected_metric
 )
+fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(255,255,255,.75)",
+                  font_color="#302d59", title_font_color="#302d59",
+                  margin=dict(l=20, r=20, t=55, b=20))
+fig.update_traces(marker_line_width=0, texttemplate="%{text:,.2f}", textposition="outside")
 
 st.plotly_chart(fig, use_container_width=True)
 

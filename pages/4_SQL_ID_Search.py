@@ -4,13 +4,16 @@ import pandas as pd
 import plotly.express as px
 
 from sample_sql_data import find_sql
-from utils import compare_execution_plans
+from utils import apply_theme, compare_execution_plans, detective_guide
+
+apply_theme()
 
 st.title("SQL ID Search")
 st.caption(
     "Search simulated Oracle SQL data and compare execution plans. "
     "Live database connection is not enabled."
 )
+detective_guide("Search the sample SQL catalog, then compare its available plans.", "Try one of the example SQL IDs shown below the search box.", "🤖")
 
 st.warning(
     "DEMO MODE: All SQL text, plan hashes, and performance metrics "
@@ -71,7 +74,12 @@ if searched_id:
                 "elapsed_seconds": "Elapsed Time (seconds)",
             },
             title="Simulated Plan Comparison",
+            color=plans["plan_hash_value"].astype(str),
+            color_discrete_sequence=["#6c4cf1", "#12b8c7", "#ff7168", "#ffbd4a"],
         )
+        fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(255,255,255,.75)",
+                          font_color="#302d59", title_font_color="#302d59",
+                          margin=dict(l=20, r=20, t=55, b=20), showlegend=False)
 
         st.plotly_chart(fig, use_container_width=True)
 

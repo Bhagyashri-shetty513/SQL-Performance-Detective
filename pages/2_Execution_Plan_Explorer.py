@@ -2,9 +2,13 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from utils import apply_theme, detective_guide
+
+apply_theme()
 
 st.title("Execution Plan Explorer")
 st.caption("Inspect sample Oracle execution plans.")
+detective_guide("Follow the plan from the statement down through its operations.", "Select or hover over chart bars to inspect the operation details.", "🤖")
 
 plan = pd.DataFrame([
     {"Id": 0, "Parent Id": None, "Operation": "SELECT STATEMENT",
@@ -82,7 +86,11 @@ fig = px.bar(
     y="Cost",
     hover_data=["Id", "Object"],
     title="Sample Execution Plan"
+    , color="Cost", color_continuous_scale=["#40c9d5", "#6c4cf1", "#ff7168"]
 )
+fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(255,255,255,.75)",
+                  font_color="#302d59", title_font_color="#302d59", coloraxis_showscale=False,
+                  margin=dict(l=20, r=20, t=55, b=20))
 st.plotly_chart(fig, use_container_width=True)
 
 st.subheader("Plan Hierarchy")
